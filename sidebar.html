@@ -34,6 +34,10 @@
               $('#yolo').html(return_value);
               element.disabled = false;
             })
+          .withFailureHandler(
+            function(msg, element) {
+              element.disabled = false;
+            })
           .withUserObject(this)
           .get_suggestions();
 
