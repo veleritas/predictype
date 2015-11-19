@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <p>This is some text.</p>
+
+
+    <p>You selected:</p>
+    <div id="yolo">
+        yolo
+    </div>
+
+    <button id="query_button">Make query</button>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+
+    <script>
+      $(function() {
+        console.log("init");
+        $('#query_button').click(make_query);
+      });
+
+      function make_query() {
+        console.log("inside make query");
+        this.disabled = true;
+
+        google.script.run
+          .withSuccessHandler(
+            function(return_value, element) {
+              console.log("it worked");
+              console.log(return_value);
+              $('#yolo').html(return_value);
+              element.disabled = false;
+            })
+          .withUserObject(this)
+          .get_suggestions();
+
+        console.log("end of make query");
+      }
+
+    </script>
+
+  </body>
+</html>
