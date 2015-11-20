@@ -5,6 +5,8 @@
   </head>
   <body>
 
+
+  <div style="margin-left: 0.5em; margin-right: 0.5em;" id="container">
     <h3 id="header">Biomedical Ontology</h3>
     <h3 id="subheader"><small>Select text to get started...</small></h3>
 
@@ -126,14 +128,14 @@
 
       function process_results(topFive) {
 
-        var topFiveString = "<ul>\n";
+        var topFiveString = "<ul class=\"list-unstyled\">\n";
         for (var i=0; i<topFive.length; i++) {
           // topFiveString += "\n"+JSON.stringify(topFive[i]);
           topFiveString += "<li><a href=\""+
                             topFive[i]['@id']+
                             "\">"+
                             topFive[i]['prefLabel']+
-                            "</li>";
+                            "</a> <button type=\"button\" class=\"btn btn-warning btn-xs\">+</button></li>";
         }
 
         topFiveString += "</ul>";
@@ -144,5 +146,6 @@
 
     </script>
 
+    </div>
   </body>
 </html>
