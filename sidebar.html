@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
   </head>
   <body>
-    <p>This is some text.</p>
 
+    <h3 id="header">Biomedical Ontology</h3>
+    <h3 id="subheader"><small>Select text to get started...</small></h3>
 
-    <p>You selected:</p>
-    <div id="yolo">
-        yolo
+    <div id="selected" style="display:none;">
+      <h3><small>Selected text:</small></h3>
+      <p></p>
     </div>
 
-    <button id="query_button">Make query</button>
+    <div id="yolo">
+    </div>
+
+    <div class="progress" id="progressBar" style="display:none;">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+      </div>
+    </div>
+
+    <button id="query_button" class="btn btn-primary">Make query</button>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
     </script>
@@ -33,16 +43,19 @@
               console.log("it worked");
               console.log(return_value);
 
-              $('#yolo').html("Querying bioontology...");
-              get_suggestions(return_value);
+              $('#subheader').hide();
+              $('#yolo').html('Querying Bioontology...');
 
-              // $('#yolo').html(return_value);
+              $('#progressBar').show();
+
+              get_suggestions(return_value);
 
               element.disabled = false;
             })
           .withFailureHandler(
             function(msg, element) {
               element.disabled = false;
+              $('#progressBar').hide();
               console.log("failed");
               console.log(msg);
             })
@@ -122,6 +135,7 @@
 
         topFiveString += "</ul>";
 
+        $('#progressBar').hide();
         $('#yolo').html(topFiveString);
       }
 
