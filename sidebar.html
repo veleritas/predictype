@@ -92,11 +92,12 @@
 
           };
           var topFive = [];
+          var orig_text = text;
 
           $.ajax({
               url: urlAddress,
               dataType: 'jsonp',
-              data: params, 
+              data: params,
               success: function(data){
                   var text = '';
                   var len = data['collection'].length;
@@ -116,7 +117,7 @@
 
                   }
 
-                  process_results(topFive);
+                  process_results(topFive, orig_text);
 
               },
               error: function(data){
@@ -126,7 +127,7 @@
 
       }
 
-      function process_results(topFive) {
+      function process_results(topFive, selected_text) {
 
         var topFiveString = "<ul class=\"list-unstyled\">\n";
         for (var i=0; i<topFive.length; i++) {
@@ -134,13 +135,40 @@
                             topFive[i]['@id']+
                             "\">"+
                             topFive[i]['prefLabel']+
-                            "</a> <button type=\"button\" class=\"btn btn-warning btn-xs\">+</button></li>";
+                            "</a> <button type=\"button\" class=\"btn btn-warning btn-xs\" onclick=\"make_links('" + selected_text + "','" + topFive[i]['prefLabel'] + "','" +
+                            topFive[i]['@id'] + "')\">+</button></li>";
         }
 
         topFiveString += "</ul>";
 
         $('#progressBar').hide();
         $('#yolo').html(topFiveString);
+
+        console.log(topFiveString);
+      }
+
+      function make_links(selection, pref_name, url)
+      {
+        console.log("you clicked link for");
+        console.log(selection);
+        console.log(pref_name);
+        console.log(url);
+
+        google.script.run
+          .withSuccessHandler(
+            function(msg, element)
+            {
+              console.log(msg);
+            }
+          )
+          .withFailureHandler(
+            function(msg, element)
+            {
+              console.log("error for making links");
+            }
+          )
+          .withUserObject(this)
+          .replace_selection(selection, pref_name, url);
       }
 
     </script>

@@ -78,6 +78,37 @@ function getSelectedText() {
   }
 }
 
+function replace_selection(selection, pref_name, url)
+{
+    var body = DocumentApp.getActiveDocument().getBody();
+
+    body.replaceText(selection, pref_name);
+
+    var previous = 999;
+    for (;;)
+    {
+        var element;
+        if (previous == 999)
+            element = body.findText(pref_name);
+        else
+            element = body.findText(pref_name, previous);
+
+        if (element)
+        {
+            var start = element.getStartOffset();
+            var stop = element.getEndOffsetInclusive();
+
+            var temp = element.getElement();
+            temp.setLinkUrl(start, stop, url);
+
+            previous = element;
+        } else {
+            Logger.log("fuck");
+            break;
+        }
+    }
+}
+
 
 function get_selected_text() {
       var text = getSelectedText();
