@@ -10,7 +10,7 @@
 
     <div id="selected" style="display:none;">
       <h3><small>Selected text:</small></h3>
-      <p></p>
+      <p id="selectedText"></p>
     </div>
 
     <div id="yolo">
@@ -44,6 +44,8 @@
               console.log(return_value);
 
               $('#subheader').hide();
+              $('#selected').show();
+              $('#selectedText').html('<em><strong>'+return_value+'</strong></em>');
               $('#yolo').html('Querying Bioontology...');
 
               $('#progressBar').show();
@@ -56,6 +58,7 @@
             function(msg, element) {
               element.disabled = false;
               $('#progressBar').hide();
+              $('#selected').hide();
               console.log("failed");
               console.log(msg);
             })
