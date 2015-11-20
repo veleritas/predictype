@@ -130,8 +130,7 @@
 
         var topFiveString = "<ul class=\"list-unstyled\">\n";
         for (var i=0; i<topFive.length; i++) {
-          // topFiveString += "\n"+JSON.stringify(topFive[i]);
-          topFiveString += "<li><a href=\""+
+          topFiveString += "<li style=\"margin-bottom: 0.25em;\"><a href=\""+
                             topFive[i]['@id']+
                             "\">"+
                             topFive[i]['prefLabel']+
