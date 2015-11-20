@@ -29,19 +29,100 @@
         google.script.run
           .withSuccessHandler(
             function(return_value, element) {
+
               console.log("it worked");
               console.log(return_value);
-              $('#yolo').html(return_value);
+
+              $('#yolo').html("Querying bioontology...");
+              get_suggestions(return_value);
+
+              // $('#yolo').html(return_value);
+
               element.disabled = false;
             })
           .withFailureHandler(
             function(msg, element) {
               element.disabled = false;
+              console.log("failed");
+              console.log(msg);
             })
           .withUserObject(this)
-          .get_suggestions();
+          .get_selected_text();
 
         console.log("end of make query");
+      }
+
+      function get_suggestions(text) {
+
+
+          var queryText = text.toString();
+          var topFiveResults = query_ncbo(queryText);
+
+      }
+
+      function query_ncbo(text) {
+
+          var urlAddress = "//data.bioontology.org/search";
+          var apiKey = "ef3fb12d-cbe4-44a6-8273-263cf896e87b";
+          var params = {
+              "api_key" : apiKey,
+              "ontologies" : "MESH",
+              // "suggest": True,
+              "also_search_obsolete": false,
+              "q" : text,
+              "format": "jsonp"
+
+          };
+          var topFive = [];
+
+          $.ajax({
+              url: urlAddress,
+              dataType: 'jsonp',
+              data: params, 
+              success: function(data){
+                  var text = '';
+                  var len = data['collection'].length;
+                  console.log(len);
+                  console.log(data);
+
+                  if (len <= 5) {
+                    // return all
+                    for(var i=0;i<len;i++){
+                      topFive.push(data['collection'][i]);
+                    }
+                  } else {
+                    // return top 5
+                    for(var i=0;i<5;i++){
+                      topFive.push(data['collection'][i]);
+                    }
+
+                  }
+
+                  process_results(topFive);
+
+              },
+              error: function(data){
+                  console.log("error");
+              }
+          });
+
+      }
+
+      function process_results(topFive) {
+
+        var topFiveString = "<ul>\n";
+        for (var i=0; i<topFive.length; i++) {
+          // topFiveString += "\n"+JSON.stringify(topFive[i]);
+          topFiveString += "<li><a href=\""+
+                            topFive[i]['@id']+
+                            "\">"+
+                            topFive[i]['prefLabel']+
+                            "</li>";
+        }
+
+        topFiveString += "</ul>";
+
+        $('#yolo').html(topFiveString);
       }
 
     </script>

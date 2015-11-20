@@ -79,8 +79,7 @@ function getSelectedText() {
 }
 
 
-function get_suggestions() {
-    var text = getSelectedText();
-
-    return text;
+function get_selected_text() {
+      var text = getSelectedText();
+      return text;
 }
