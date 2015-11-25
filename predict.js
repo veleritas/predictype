@@ -77,28 +77,18 @@ function getSelectedText() {
 
 function create_links(selection, url)
 {
+    // Create links to NCBO for all instances of the selected text.
     var body = DocumentApp.getActiveDocument().getBody();
 
-    var previous = 999;
-    for (;;)
+    var element = body.findText(selection);
+    while (element)
     {
-        var element;
-        if (previous == 999)
-            element = body.findText(selection);
-        else
-            element = body.findText(selection, previous);
+        var start = element.getStartOffset();
+        var stop = element.getEndOffsetInclusive();
 
-        if (element)
-        {
-            var start = element.getStartOffset();
-            var stop = element.getEndOffsetInclusive();
+        var temp = element.getElement();
+        temp.setLinkUrl(start, stop, url);
 
-            var temp = element.getElement();
-            temp.setLinkUrl(start, stop, url);
-
-            previous = element;
-        } else {
-            break;
-        }
+        element = body.findText(selection, element);
     }
 }
