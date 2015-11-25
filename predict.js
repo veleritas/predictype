@@ -34,9 +34,6 @@ function showSidebar() {
   DocumentApp.getUi().showSidebar(ui);
 }
 
-
-
-
 /**
  * Gets the text the user has selected. If there is no selection,
  * this function displays an error message.
@@ -78,20 +75,18 @@ function getSelectedText() {
   }
 }
 
-function replace_selection(selection, pref_name, url)
+function create_links(selection, url)
 {
     var body = DocumentApp.getActiveDocument().getBody();
-
-    body.replaceText(selection, pref_name);
 
     var previous = 999;
     for (;;)
     {
         var element;
         if (previous == 999)
-            element = body.findText(pref_name);
+            element = body.findText(selection);
         else
-            element = body.findText(pref_name, previous);
+            element = body.findText(selection, previous);
 
         if (element)
         {
@@ -103,14 +98,7 @@ function replace_selection(selection, pref_name, url)
 
             previous = element;
         } else {
-            Logger.log("fuck");
             break;
         }
     }
-}
-
-
-function get_selected_text() {
-      var text = getSelectedText();
-      return text;
 }

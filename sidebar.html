@@ -1,54 +1,48 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
   </head>
+
   <body>
 
+    <div style="margin-left: 0.5em; margin-right: 0.5em;" id="container">
+      <h3 id="header">Biomedical Ontology</h3>
+      <h3 id="subheader"><small>Select text to get started...</small></h3>
 
-  <div style="margin-left: 0.5em; margin-right: 0.5em;" id="container">
-    <h3 id="header">Biomedical Ontology</h3>
-    <h3 id="subheader"><small>Select text to get started...</small></h3>
-
-    <div id="selected" style="display:none;">
-      <h3><small>Selected text:</small></h3>
-      <p id="selectedText"></p>
-    </div>
-
-    <div id="yolo">
-    </div>
-
-    <div class="progress" id="progressBar" style="display:none;">
-      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+      <div id="selected" style="display:none;">
+        <h3><small>Selected text:</small></h3>
+        <p id="selectedText"></p>
       </div>
-    </div>
 
-    <button id="query_button" class="btn btn-primary">Make query</button>
+      <div id="queryText"></div>
+
+      <div class="progress" id="progressBar" style="display:none;">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+        </div>
+      </div>
+
+      <button id="query_button" class="btn btn-primary">Make Query</button>
+    </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
     </script>
 
     <script>
       $(function() {
-        console.log("init");
         $('#query_button').click(make_query);
       });
 
       function make_query() {
-        console.log("inside make query");
         this.disabled = true;
 
         google.script.run
           .withSuccessHandler(
             function(return_value, element) {
-
-              console.log("it worked");
-              console.log(return_value);
-
               $('#subheader').hide();
               $('#selected').show();
               $('#selectedText').html('<em><strong>'+return_value+'</strong></em>');
-              $('#yolo').html('Querying Bioontology...');
+              $('#queryText').html('Querying Bioontology...');
 
               $('#progressBar').show();
 
@@ -59,27 +53,22 @@
           .withFailureHandler(
             function(msg, element) {
               element.disabled = false;
+
               $('#progressBar').hide();
               $('#selected').hide();
-              console.log("failed");
+
               console.log(msg);
             })
           .withUserObject(this)
-          .get_selected_text();
-
-        console.log("end of make query");
+          .getSelectedText();
       }
 
       function get_suggestions(text) {
-
-
           var queryText = text.toString();
           var topFiveResults = query_ncbo(queryText);
-
       }
 
       function query_ncbo(text) {
-
           var urlAddress = "//data.bioontology.org/search";
           var apiKey = "ef3fb12d-cbe4-44a6-8273-263cf896e87b";
           var params = {
@@ -89,8 +78,8 @@
               "also_search_obsolete": false,
               "q" : text,
               "format": "jsonp"
-
           };
+
           var topFive = [];
           var orig_text = text;
 
@@ -104,31 +93,18 @@
                   console.log(len);
                   console.log(data);
 
-                  if (len <= 5) {
-                    // return all
-                    for(var i=0;i<len;i++){
-                      topFive.push(data['collection'][i]);
-                    }
-                  } else {
-                    // return top 5
-                    for(var i=0;i<5;i++){
-                      topFive.push(data['collection'][i]);
-                    }
-
-                  }
+                  for (var i = 0; i < len && i < 5; i++)
+                    topFive.push(data['collection'][i]);
 
                   process_results(topFive, orig_text);
-
               },
               error: function(data){
                   console.log("error");
               }
           });
-
       }
 
       function process_results(topFive, selected_text) {
-
         var topFiveString = "<ul class=\"list-unstyled\">\n";
         for (var i=0; i<topFive.length; i++) {
           topFiveString += "<li style=\"margin-bottom: 0.25em;\"><a href=\""+
@@ -142,37 +118,27 @@
         topFiveString += "</ul>";
 
         $('#progressBar').hide();
-        $('#yolo').html(topFiveString);
-
-        console.log(topFiveString);
+        $('#queryText').html(topFiveString);
       }
 
       function make_links(selection, pref_name, url)
       {
-        console.log("you clicked link for");
-        console.log(selection);
-        console.log(pref_name);
-        console.log(url);
-
         google.script.run
           .withSuccessHandler(
             function(msg, element)
             {
-              console.log(msg);
+              console.log("Successfully created links.");
             }
           )
           .withFailureHandler(
             function(msg, element)
             {
-              console.log("error for making links");
+              console.log("Could not create links.");
             }
           )
           .withUserObject(this)
-          .replace_selection(selection, pref_name, url);
+          .create_links(selection, url);
       }
-
     </script>
-
-    </div>
   </body>
 </html>
